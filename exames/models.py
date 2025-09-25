@@ -77,6 +77,14 @@ class AcessoMedico(models.Model):
 
         super(AcessoMedico, self).save(*args, **kwargs)
 
+class ExamesRealizados(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    exame = models.ForeignKey(TiposExames, on_delete=models.DO_NOTHING)
+    data_realizacao = models.DateField()
+
+    def __str__(self):
+        return f'{self.usuario} | {self.exame.nome} | {self.data_realizacao}'
+
 
 @property
 def status(self):
@@ -86,3 +94,7 @@ def status(self):
 def url(self):
     #TODO: reverse
     return f"http://127.0.0.1:8000/exames/acesso_medico/{self.token}"
+
+
+
+

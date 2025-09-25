@@ -39,6 +39,33 @@ def solicitar_exames(request):
         messages.success(request, 'Pedido de exame realizado com sucesso')
         return redirect('solicitar_exames')
 
+
+
+@login_required
+def fechar_pedido(request):
+    pedidos = PedidosExames.objects.filter(usuario=request.user).order_by('-data')
+    return render(request, 'fechar_pedido.html', {'pedidos': pedidos})
+
+
+
+@login_required
+def gerenciar_pedidos(request):
+    pedidos = PedidosExames.objects.filter(usuario=request.user).order_by('-data')
+    return render(request, 'gerenciar_pedidos.html', {'pedidos': pedidos})          
+
+
+@login_required
+def cancelar_pedido(request, pedido_id):
+    pedido = PedidosExames.objects.get(id=pedido_id)
+    if pedido.usuario != request.user:
+        messages.error(request, 'Você não tem permissão para cancelar este pedido')
+        return redirect('gerenciar_pedidos')
+    
+    pedido.agendado = False
+    pedido.save()
+    messages.success(request, 'Pedido cancelado com sucesso')
+    return redirect('gerenciar_pedidos')
+
 @login_required
 def gerar_acesso_medico(request):
     if request.method == "POST":
@@ -62,6 +89,8 @@ def gerar_acesso_medico(request):
 
     acessos_medicos = AcessoMedico.objects.filter(usuario=request.user)
     return render(request, 'gerar_acesso_medico.html', {'acessos_medicos': acessos_medicos})
+
+
 
 @login_required
 def gerenciar_exames(request):
@@ -94,7 +123,7 @@ def acesso_medico(request, token):
     
     if timezone.now() > (acesso_medico.criado_em + timezone.timedelta(hours=acesso_medico.tempo_de_acesso)):
         messages.error(request, 'Token expirado')
-        return redirect('/')
+        return redirect('/usuarios/login')
     
     pedidos = PedidosExames.objects.filter(usuario=acesso_medico.usuario).filter(data__gte=acesso_medico.data_exames_iniciais).filter(data__lte=acesso_medico.data_exames_finais)
     

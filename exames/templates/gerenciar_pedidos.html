@@ -26,22 +26,19 @@
                   <th>Ação</th>
                 </tr>
 
-                {% for pedidos in pedidos_exames %}
+                {% for pedido in pedidos %}
                     <tr class="linha-tabela">
-                        <td>{{pedidos.id}}</td>
-                        <td>{{pedidos.data}}</td>
+                        <td>{{pedido.id}}</td>
+                        <td>{{pedido.data|date:"d/m/Y"}}</td>
                         <td>
-                            <select class="form-select">
-                                {% for exame in pedidos.exames.all %}
-                                    <option style="color: black"  value="">{{exame.exame.nome}}</option>
-                                {% endfor %}
-                            </select>
+                            {% for exame in pedido.exames.all %}
+                                {{exame.exame.nome}}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
                         </td>
                         <td>
-                         
-                            <a href="{% url "cancelar_pedido" pedidos.id %}"  class="btn btn-danger {% if not pedidos.agendado %} disabled {% endif %}">Cancelar</a>
+                            <a href="{% url 'cancelar_pedido' pedido.id %}" class="btn btn-danger {% if not pedido.agendado %} disabled {% endif %}">Cancelar</a>
                         </td>
-                    </tr
+                    </tr>
                 {% endfor %}
                
               </table>

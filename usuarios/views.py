@@ -5,9 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
-def cadastro(request):
-    if request.method == "GET":
-        return render(request, 'cadastro.html')
+
 
 def cadastro(request):
     if request.user.is_authenticated:
